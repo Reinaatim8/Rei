@@ -1,8 +1,10 @@
-import React, {useEffect,useState} from "react";
+import React, { useEffect,useState} from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import StudentSidebar from "../components/StudentSidebar";
+//import InAppNotifications from "../components/InAppNotifications";
+//import EmailNotifications from "../components/EmailNotifications";
 import "./StudentDashboard.css";
+import { toast } from "react-toastify";
 
 const StudentDashboard = () => {
   const navigate = useNavigate();
@@ -10,20 +12,22 @@ const StudentDashboard = () => {
   const [issues, setIssues] = useState([]); 
 
 
-  useEffect(() => {
-    const storedUser = localStorage.getItem(
-      "user");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-    axios.get("https://kennedymutebi7.pythonanywhere.com/issues/api/issues/")
-    .then(response => {
-      setIssues(response.data);
-    })
-    .catch(error => {
-      console.error("Error fetching issues:", error);
-    });
-  }, []);
+//load user from local storage
+useEffect(() => {
+  try{
+  const storedUser = localStorage.getItem("user");
+  if (storedUser) {
+    setUser(JSON.parse(storedUser));
+    toast.success('Hello Again!',{autoClose:60000});
+    //alert("Login Successful!");
+  }  
+  } catch (error) {
+    console.error("Error loading user from local storage:", error);
+    setUser(null);
+  } 
+}, []);
+
+  
   const handleReportIssue = () => {
     navigate('/StudentIssueReport');
   };
@@ -37,10 +41,13 @@ const StudentDashboard = () => {
   return (
     <div className="student-dashboard-container">
       <StudentSidebar />
+
+     {/*} <EmailNotifications />
+     {/* <InAppNotifications />*/}
       <div className="student-dashboard-content">
         <div className="student-dashboard-panel">
           <div className="student-dashboard-header">
-            <img src="/images/academician.png" alt="student logo"/>
+            <img src="/images/AITSLOGO.png"style={{width:"350px"}} alt="student logo"/>
             <h2 className="student-dashboard-title">
             {user ? `Welcome, Glad to see you back ${user.username}! 👋`: ""}
             </h2>
@@ -58,7 +65,7 @@ const StudentDashboard = () => {
             </button>
             <button className="student-dashboard-btn student-dashboard-btn-secondary">
               <span className="student-dashboard-btn-icon">📞</span>
-              Contact Lecturer
+              Contact Us
             </button>
             </div>
             {/*  Logout Button */}
